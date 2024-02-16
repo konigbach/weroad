@@ -1,0 +1,22 @@
+{
+    "watch": {
+        "docs:merge-yaml": {
+            "patterns": ["app/Http/Api/V1/**/api-doc.yaml", "docs/openapi.yaml"],
+            "extensions": ["yaml"],
+            "quiet": true
+        }
+    },
+    "scripts": {
+        "openapi:serve": "npm-watch 'docs:merge-yaml' > /dev/null & openapi preview-docs docs/generated/openapi.yaml",
+        "openapi:generate": "openapi build-docs docs/generated/openapi.yaml --title 'Operation rules service' --output docs/generated/index.html",
+        "docs:merge-yaml": "merge-yaml -i docs/openapi.yaml app/Http/Api/V1/**/api-doc.yaml -o docs/generated/openapi.yaml",
+        "docs:serve": "npm run openapi:serve",
+        "docs:build": "npm run docs:merge-yaml && npm run openapi:generate"
+    },
+    "devDependencies": {
+        "@redocly/cli": "^1.0.0-beta.124",
+        "merge-yaml-cli": "^1.1.2",
+        "npm-watch": "^0.11.0",
+        "watch": "^1.0.2"
+    }
+}

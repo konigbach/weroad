@@ -1,0 +1,50 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Weroad
+  x-redocly-sidebar-toc:
+    - title: My Section
+      href: ./path/to/documentation.md#my-section
+  description: "# Introduction\nThis API is documented in **OpenAPI format**.\n\n# Authentication\nThis API offers the standard way of authenticating requests via `Bearer` token. Once you get your token (there's no endpoint, so it's a manual operation) you must set the Authorization header like this: `Authorization: Bearer <your-token>`.\n\n# HTTP Status Codes\nThis API uses conventional HTTP response codes to indicate the success or failure of an API request. In general: Codes in the **2xx** range indicate success. Codes in the **4xx** range indicate an error that failed given the information provided (e.g., a required parameter was omitted, etc.). Codes in the **5xx** range indicate an error with servers.\n\n| Status | Name | Description |\n| --- | --- | --- |\n| 200 | OK | Everything worked as expected |\n| 201 | Created | The object has been created successfully |\n| 204 | No Content | Everything worked as expected with no data response |\n| 400 | Bad Request | The request was unacceptable |\n| 401 | Unauthorized | The request was unauthenticated |\n| 403 | Forbidden | The request was accepted, but has no permissions to perform the operation |\n| 404 | Not Found | Not Found\tThe requested resource doesn't exist |\n| 422 | Unprocessable entity | The input data provided is invalid. Check the errors in the response. |\n| 429 | Too Many Requests | Too many requests hit the API too quickly |\n| 500, 502, 503, 504 | Server Errors | Something went wrong on our servers |\n\n# API Responses\n## Error Responses\nAll the errors thrown by the API will share a common structure along with an [http status code](#section/HTTP-Status-Codes).\n\n| Field | Type | Description | Required |\n| --- | --- | --- | --- |\n| message | `string` | A message indicating what happened | ✅ |\n| errors | `array<object>` | The errors that caused the failure when providing input to the request | ⚠️ Only for *422* status code |\n| exception | `string` | The exception thrown | ⚠️ Only in local environment |\n| trace | `array<object>` | Exception's trace | ⚠️ Only in local environment |\n\nExample:\n```json\n{\n    \"message\": \"Client not found\",\n    \"exception\": \"App\\\\Exceptions\\\\ClientNotFound\",\n    \"trace\": [\n        {...},\n        {...}\n    ]\n}\n```\n\n## (401) Unauthenticated\nAll the endpoints excepting issuing a token are protected. This means you can't access the content of them if you are not authenticated. If you try to access an endpoint while unauthenticated, the API will respond with a `401` HTTP status code and a message with the following format:\n\n```json\n{\n  \"message\": \"Unauthenticated.\"\n}\n```\n\n## (403) Forbidden\nIn addition of authentication, all the endpoints are protected with permissions that are granted per user. This means you can't access the content of them if you are not authorized. If you try to access an endpoint without the needed permissions, the API will respond with a `403` HTTP status code and a message with the following format:\n\n```json\n{\n  \"message\": \"Forbidden.\"\n}\n```\n\n## (422) Invalid Input\nWhen a request require input from the end user it'll be validated and in case something is wrong with the provided information, the API will respond with a `422` HTTP status code and a message with the following format:\n\n```json\n{\n    \"message\": \"Unprocesable Entity.\",\n    \"exception\": \"Illuminate\\Validation\\ValidationException\",\n    \"errors\": {\n        \"email\": [\n            \"The email field is required\"\n        ],\n        \"name\": [\n            \"The name must is required\",\n            \"The name must be an string\"\n        ]\n    }\n    \"trace\": [\n        {...},\n        {...}\n    ]\n}\n```\n\n## (429) Rate limiting\nAll the requests are rate limit with a number of 60 request per minute per user/ip. If you try to do more requests than allowed in such period the API will respond with a `429` HTTP status code and a message with the following format:\n\n```json\n{\n  \"message\": \"You have exceeded the rate limit. Please try again later.\"\n}\n```\n"
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: >-
+        1a6def57-a7dc-41bc-badf-a2b722eb8690|HzLVOLZYUqbbpKXogsl67AdMsvoePy70jfAWL92B
+  schemas:
+    paginator:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        from:
+          type: integer
+          example: 1
+        last_page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 15
+        to:
+          type: integer
+          example: 1
+        total:
+          type: integer
+          example: 1
+    page:
+      type: object
+      properties:
+        number:
+          type: integer
+          example: 1
+          minimum: 1
+        size:
+          type: integer
+          example: 30
+          minimum: 1
+          maximum: 30
+paths: {}
