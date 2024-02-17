@@ -24,19 +24,18 @@ final class Request extends FormRequest
     public function rules(): array
     {
         return [
-            'travel_id' => 'required|exists:travels,id',
-            'name' => 'required|string|max:255',
-            'starting_date' => 'required|date',
             'ending_date' => 'required|date|after:starting_date',
+            'name' => 'required|string|max:255',
             'price' => 'required|numeric',
+            'starting_date' => 'required|date',
         ];
     }
 
     public function travel(): Travel
     {
-        return Travel::findOrFail(
-            id: $this->string('travel_id')
-        );
+        return Travel::query()
+            ->where('slug', $this->routeString('slug'))
+            ->firstOrFail();
     }
 
     public function name(): string

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Api\V1\CreateTour;
 
 use App\Models\Travel;
-use Illuminate\Support\Arr;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Concerns\WithValidationAssertions;
@@ -15,11 +14,19 @@ class Test extends FeatureTest
 {
     use WithValidationAssertions;
 
+    private Travel $travel;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->travel = Travel::factory()->create();
+    }
+
     /** @test */
     public function a_guest_cant_create_a_tour(): void
     {
         $this->createTour()
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     /** @test */
@@ -38,7 +45,7 @@ class Test extends FeatureTest
     public function to_create_a_tour_a_valid_payload_is_required(array $input, string $errorKey): void
     {
         $this->authAsAdminRole()
-            ->createTour()
+            ->createTour($input)
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertValidationErrorRule($errorKey);
     }
@@ -46,8 +53,6 @@ class Test extends FeatureTest
     public static function invalidPayloads(): array
     {
         return [
-            'travel_id_is_required' => [['travel_id' => null], 'travel_id'],
-            'travel_id_does_not_exist' => [['travel_id' => 0], 'travel_id'],
             'name_is_required' => [['name' => null], 'name'],
             'name_is_not_a_string' => [['name' => 0], 'name'],
             'name_is_too_long' => [['name' => str_repeat('a', 256)], 'name'],
@@ -62,25 +67,8 @@ class Test extends FeatureTest
     }
 
     /** @test */
-    public function create(): void
-    {
-        $this->authAsAdminRole()
-            ->createTour()
-            ->assertStatus(Response::HTTP_CREATED);
-    }
-
-    /** @test */
-    public function an_admin_with_role_admin_can_create_if_it_has_not_permission_to(): void
-    {
-        $this->authAsAdminRole()
-            ->createTour()
-            ->assertStatus(200);
-    }
-
-    /** @test */
     public function an_admin_can_create_a_tour(): void
     {
-
         $this->authAsAdminRole()
             ->createTour()
             ->assertStatus(Response::HTTP_CREATED);
@@ -88,23 +76,17 @@ class Test extends FeatureTest
 
     private function createTour(array $input = []): TestResponse
     {
-        return $this->postJson('api/v1/tours', $this->validInput($input));
+        return $this->postJson("api/v1/travels/{$this->travel->slug}/create", $this->validInput($input));
     }
 
     private function validInput(array $override): array
     {
-        $data = [
+        return array_merge([
             'travel_id' => Travel::factory()->create()->id,
             'name' => 'Tour name',
             'starting_date' => '2020-01-01',
             'ending_date' => '2020-01-02',
             'price' => 10_000,
-        ];
-
-        foreach ($override as $key => $value) {
-            Arr::set($data, $key, $value);
-        }
-
-        return $data;
+        ], $override);
     }
 }

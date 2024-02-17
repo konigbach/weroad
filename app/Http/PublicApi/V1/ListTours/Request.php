@@ -22,11 +22,11 @@ final class Request extends FormRequest
     public function rules(): array
     {
         return [
-            'slug' => ['required', 'string'],
-            'priceFrom' => ['nullable', 'numeric'],
-            'priceTo' => ['nullable', 'numeric'],
-            'dateFrom' => ['nullable', 'numeric'],
-            'dateTo' => ['nullable', 'numeric'],
+            'dateFrom' => 'nullable|numeric',
+            'dateTo' => 'nullable|numeric',
+            'priceFrom' => 'nullable|numeric',
+            'priceTo' => 'nullable|numeric',
+            'slug' => 'nullable|string',
         ];
     }
 

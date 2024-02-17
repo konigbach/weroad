@@ -21,16 +21,16 @@ final class Request extends FormRequest
     public function rules(): array
     {
         return [
-            'slug' => 'required|string|unique:travels,slug',
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
             'days' => 'required|integer',
+            'description' => 'required|string',
             'moods.*' => 'string',
-            'moods.*.nature' => 'required|int|min:0|max:100',
-            'moods.*.relax' => 'required|int|min:0|max:100',
-            'moods.*.history' => 'required|int|min:0|max:100',
             'moods.*.culture' => 'required|int|min:0|max:100',
+            'moods.*.history' => 'required|int|min:0|max:100',
+            'moods.*.nature' => 'required|int|min:0|max:100',
             'moods.*.party' => 'required|int|min:0|max:100',
+            'moods.*.relax' => 'required|int|min:0|max:100',
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|unique:travels,slug',
         ];
     }
 
