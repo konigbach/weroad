@@ -34,16 +34,6 @@ final class Request extends FormRequest
         return $this->routeString('slug');
     }
 
-    public function priceFrom(): int
-    {
-        return $this->integer('priceFrom');
-    }
-
-    public function priceTo(): int
-    {
-        return $this->integer('priceTo');
-    }
-
     public function dateFrom(): CarbonImmutable
     {
         return $this->immutableDate('dateFrom');
@@ -52,5 +42,15 @@ final class Request extends FormRequest
     public function dateTo(): CarbonImmutable
     {
         return $this->immutableDate('dateTo');
+    }
+
+    public function priceFrom(): int
+    {
+        return $this->integer('priceFrom');
+    }
+
+    public function priceTo(): int
+    {
+        return $this->integer('priceTo');
     }
 }

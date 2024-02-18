@@ -22,7 +22,13 @@ final readonly class Response implements Responsable
     public function toResponse($request): JsonResponse
     {
         return response()->json([
-            'tours' => $this->tours->map(fn (Tour $tour) => $tour->toArray())->toArray(),
+            'tours' => $this->tours->map(fn (Tour $tour) => [
+                'id' => $tour->id,
+                'endingDate' => $tour->ending_date->format('Y-m-d'),
+                'name' => $tour->name,
+                'price' => $tour->formattedPrice(),
+                'startingDate' => $tour->starting_date->format('Y-m-d'),
+            ]),
         ]);
     }
 }

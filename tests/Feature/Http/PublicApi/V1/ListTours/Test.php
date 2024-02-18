@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Http\PublicApi\V1\ListTours;
 
+use App\Models\Tour;
 use App\Models\Travel;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +40,7 @@ class Test extends FeatureTestCase
         return [
             'date_from_must_be_a_date' => [['dateFrom' => 'invalid-date'], 'dateFrom'],
             'date_to_must_be_a_date' => [['dateTo' => 'invalid-date'], 'dateTo'],
-            'date_to_must_be_after_date_from' => [['dateFrom' => '2022-01-01', 'dateTo' => '2022-01-01'], 'dateTo'],
+            'date_to_must_be_after_date_from' => [['dateFrom' => '2024-01-01', 'dateTo' => '2024-01-01'], 'dateTo'],
             'price_from_must_be_numeric' => [['priceFrom' => 'invalid-price'], 'priceFrom'],
             'price_to_must_be_numeric' => [['priceTo' => 'invalid-price'], 'priceTo'],
             'price_to_must_be_greater_than_or_equal_to_price_from' => [['priceFrom' => 100, 'priceTo' => 50], 'priceTo'],
@@ -47,10 +48,67 @@ class Test extends FeatureTestCase
     }
 
     /** @test */
-    public function a_user_can_list_tours(): void
+    public function a_user_can_list_tours_filter_by_date_from(): void
     {
-        $this->listTours()
-            ->assertStatus(Response::HTTP_OK);
+        $tour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'starting_date' => '2024-01-01',
+            ]);
+
+        $pastTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'starting_date' => '2023-01-01',
+            ]);
+
+        $this->listTours(['dateFrom' => '2024-01-01'])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'tours' => [
+                    [
+                        'id' => $tour->id,
+                    ],
+                ],
+            ])->assertJsonMissing([
+                'tours' => [
+                    [
+                        'id' => $pastTour->id,
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function a_user_can_list_tours_filter_by_date_to(): void
+    {
+        $tour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'starting_date' => '2024-02-01',
+            ]);
+
+        $pastTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'starting_date' => '2024-01-01',
+            ]);
+
+        $this->listTours(['dateTo' => '2024-02-01'])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'tours' => [
+                    [
+                        'id' => $tour->id,
+                    ],
+                ],
+            ])->assertJsonMissing([
+                'tours' => [
+                    [
+                        'id' => $pastTour->id,
+                    ],
+                ],
+            ]);
     }
 
     private function listTours(array $params = []): TestResponse
