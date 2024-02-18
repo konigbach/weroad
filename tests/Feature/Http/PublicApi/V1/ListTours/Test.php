@@ -150,6 +150,69 @@ class Test extends FeatureTestCase
             ->assertJsonCount(2, 'data.tours');
     }
 
+    /** @test */
+    public function a_user_can_list_tours_sorted_by_starting_date_asc(): void
+    {
+        $lastTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'starting_date' => '2024-01-02',
+            ]);
+
+        $firstTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'starting_date' => '2024-01-01',
+            ]);
+
+        $this->listTours()
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.tours.0.id', $firstTour->id)
+            ->assertJsonPath('data.tours.1.id', $lastTour->id);
+    }
+
+    /** @test */
+    public function a_user_can_list_tours_sorted_by_price_asc(): void
+    {
+        $firstTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'price' => 1,
+            ]);
+
+        $lastTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'price' => 1000,
+            ]);
+
+        $this->listTours(['sortBy' => 'price', 'sortOrder' => 'asc'])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.tours.0.id', $firstTour->id)
+            ->assertJsonPath('data.tours.1.id', $lastTour->id);
+    }
+
+    /** @test */
+    public function a_user_can_list_tours_sorted_by_price_desc(): void
+    {
+        $lastTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'price' => 1,
+            ]);
+
+        $firstTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'price' => 1000,
+            ]);
+
+        $this->listTours(['sortBy' => 'price', 'sortOrder' => 'desc'])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonPath('data.tours.0.id', $firstTour->id)
+            ->assertJsonPath('data.tours.1.id', $lastTour->id);
+    }
+
     private function listTours(array $params = []): TestResponse
     {
         return $this->getJson("public-api/v1/travels/{$this->travel->slug}/tours?".http_build_query($params));

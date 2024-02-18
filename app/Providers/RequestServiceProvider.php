@@ -15,18 +15,6 @@ class RequestServiceProvider extends ServiceProvider
         $this->registerImmutableDate();
         $this->registerNullableDate();
         $this->registerTypeSafeNullablePrimitiveMethods();
-        $this->registerRoutePrimitiveMethods();
-    }
-
-    private function registerRoutePrimitiveMethods(): void
-    {
-        Request::macro('routeString', function (string $key): string {
-            $value = request()?->route($key);
-
-            assert(is_string($value));
-
-            return $value;
-        });
     }
 
     private function registerTypeSafeNullablePrimitiveMethods(): void

@@ -28,7 +28,7 @@ final readonly class Controller
                 /** @phpstan-ignore-next-line */
                 $query->orderBy($request->sort()->field, $request->sort()->direction);
             })
-            ->orderBy('starting_date', 'asc')
+            ->orderBy('starting_date')
             ->paginate();
 
         return new Response($tours);

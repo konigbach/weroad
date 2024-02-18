@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Api\V1\CreateTour;
 
 use App\Models\Tour;
-use App\Models\Travel;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -29,13 +28,6 @@ final class Request extends FormRequest
             'price' => 'required|numeric',
             'startingDate' => 'required|date',
         ];
-    }
-
-    public function travel(): Travel
-    {
-        return Travel::query()
-            ->where('slug', $this->routeString('slug'))
-            ->firstOrFail();
     }
 
     public function name(): string

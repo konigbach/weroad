@@ -33,11 +33,6 @@ final class Request extends FormRequest
         ];
     }
 
-    public function slug(): string
-    {
-        return $this->routeString('slug');
-    }
-
     public function dateFrom(): ?CarbonImmutable
     {
         return $this->nullableDate('dateFrom');
