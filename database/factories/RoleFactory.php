@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enum\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class RoleFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'admin',
+            'name' => Role::ADMIN->value,
         ];
     }
 }

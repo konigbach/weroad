@@ -8,7 +8,7 @@ use Illuminate\Routing\Router;
 $router->group([
     'prefix' => 'travels',
 ], function (Router $router) {
-    //$router->get('', UpdateTravel\Controller::class);
     $router->post('', CreateTravel\Controller::class);
+    $router->put('{travel}', UpdateTravel\Controller::class);
     $router->post('{slug}/create', CreateTour\Controller::class);
 });

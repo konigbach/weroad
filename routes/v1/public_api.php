@@ -4,7 +4,7 @@ use App\Http\PublicApi\V1\ListTours;
 use Illuminate\Routing\Router;
 
 $router->group([
-    'prefix' => 'tours',
+    'prefix' => 'travels',
 ], function (Router $router) {
-    $router->get('', ListTours\Controller::class);
+    $router->get('{slug}', ListTours\Controller::class);
 });

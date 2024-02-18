@@ -24,10 +24,10 @@ final class Request extends FormRequest
     public function rules(): array
     {
         return [
-            'ending_date' => 'required|date|after:starting_date',
+            'endingDate' => 'required|date|after:startingDate',
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'starting_date' => 'required|date',
+            'startingDate' => 'required|date',
         ];
     }
 
@@ -45,13 +45,13 @@ final class Request extends FormRequest
 
     public function startingDate(): CarbonImmutable
     {
-        return $this->immutableDate('starting_date');
+        return $this->immutableDate('startingDate');
 
     }
 
     public function endingDate(): CarbonImmutable
     {
-        return $this->immutableDate('ending_date');
+        return $this->immutableDate('endingDate');
     }
 
     public function price(): int

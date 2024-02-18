@@ -11,7 +11,27 @@ final readonly class Moods
         public int $relax,
         public int $history,
         public int $culture,
-        public int $party
+        public int $party,
     ) {
+    }
+
+    /**
+     * @return array{
+     *      nature: int,
+     *      relax: int,
+     *      history: int,
+     *      culture: int,
+     *      party: int,
+     * }
+     */
+    public function toArray(): array
+    {
+        return [
+            'nature' => $this->nature,
+            'relax' => $this->relax,
+            'history' => $this->history,
+            'culture' => $this->culture,
+            'party' => $this->party,
+        ];
     }
 }

@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Api\V1\UpdateTravel;
 
-use App\Http\Api\V1\CreateTravel\DTO\Moods;
+use App\Http\Api\V1\UpdateTravel\DTO\Moods;
+use App\Models\Travel;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class Request extends FormRequest
 {
-    public function authorize(): Response
+    public function authorize(Gate $gate): Response
     {
-        return Response::allow();
+        return $gate->inspect('update', Travel::class);
     }
 
     /**
@@ -23,20 +25,26 @@ final class Request extends FormRequest
         return [
             'days' => 'required|integer',
             'description' => 'required|string',
-            'moods.*' => 'string',
-            'moods.*.culture' => 'required|int|min:0|max:100',
-            'moods.*.history' => 'required|int|min:0|max:100',
-            'moods.*.nature' => 'required|int|min:0|max:100',
-            'moods.*.party' => 'required|int|min:0|max:100',
-            'moods.*.relax' => 'required|int|min:0|max:100',
+            'isPublic' => 'required|boolean',
+            'moods' => 'required|array',
+            'moods.culture' => 'required|int|min:0|max:100',
+            'moods.history' => 'required|int|min:0|max:100',
+            'moods.nature' => 'required|int|min:0|max:100',
+            'moods.party' => 'required|int|min:0|max:100',
+            'moods.relax' => 'required|int|min:0|max:100',
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|unique:travels,slug',
+            'slug' => 'required|string|max:255',
         ];
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->boolean('isPublic');
     }
 
     public function slug(): string
     {
-        return $this->routeString('slug');
+        return $this->string('slug')->value();
     }
 
     public function name(): string

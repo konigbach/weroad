@@ -8,9 +8,9 @@ use App\Models\Travel;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Concerns\WithValidationAssertions;
-use Tests\Feature\FeatureTest;
+use Tests\Feature\FeatureTestCase;
 
-class Test extends FeatureTest
+class TestCase extends FeatureTestCase
 {
     use WithValidationAssertions;
 
@@ -53,16 +53,16 @@ class Test extends FeatureTest
     public static function invalidPayloads(): array
     {
         return [
-            'name_is_required' => [['name' => null], 'name'],
+            'ending_date_is_not_a_date' => [['endingDate' => 'not-a-date'], 'endingDate'],
+            'ending_date_is_not_after_starting_date' => [['startingDate' => '2020-01-01', 'endingDate' => '2019-01-01'], 'endingDate'],
+            'ending_date_is_required' => [['endingDate' => null], 'endingDate'],
             'name_is_not_a_string' => [['name' => 0], 'name'],
+            'name_is_required' => [['name' => null], 'name'],
             'name_is_too_long' => [['name' => str_repeat('a', 256)], 'name'],
-            'starting_date_is_required' => [['starting_date' => null], 'starting_date'],
-            'starting_date_is_not_a_date' => [['starting_date' => 'not-a-date'], 'starting_date'],
-            'ending_date_is_required' => [['ending_date' => null], 'ending_date'],
-            'ending_date_is_not_a_date' => [['ending_date' => 'not-a-date'], 'ending_date'],
-            'ending_date_is_not_after_starting_date' => [['starting_date' => '2020-01-01', 'ending_date' => '2019-01-01'], 'ending_date'],
-            'price_is_required' => [['price' => null], 'price'],
             'price_is_not_a_number' => [['price' => 'not-a-number'], 'price'],
+            'price_is_required' => [['price' => null], 'price'],
+            'starting_date_is_not_a_date' => [['startingDate' => 'not-a-date'], 'startingDate'],
+            'starting_date_is_required' => [['startingDate' => null], 'startingDate'],
         ];
     }
 
@@ -72,6 +72,14 @@ class Test extends FeatureTest
         $this->authAsAdminRole()
             ->createTour()
             ->assertStatus(Response::HTTP_CREATED);
+
+        $this->assertDatabaseHas('tours', [
+            'ending_date' => '2020-01-02',
+            'name' => 'Tour name',
+            'price' => 10_000,
+            'starting_date' => '2020-01-01',
+            'travel_id' => $this->travel->id,
+        ]);
     }
 
     private function createTour(array $input = []): TestResponse
@@ -82,11 +90,10 @@ class Test extends FeatureTest
     private function validInput(array $override): array
     {
         return array_merge([
-            'travel_id' => Travel::factory()->create()->id,
+            'endingDate' => '2020-01-02',
             'name' => 'Tour name',
-            'starting_date' => '2020-01-01',
-            'ending_date' => '2020-01-02',
             'price' => 10_000,
+            'startingDate' => '2020-01-01',
         ], $override);
     }
 }

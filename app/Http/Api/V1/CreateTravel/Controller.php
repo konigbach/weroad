@@ -11,12 +11,12 @@ final readonly class Controller
     public function __invoke(Request $request): Response
     {
         $travel = Travel::create([
-            'slug' => $request->slug(),
-            'is_public' => $request->isPublic(),
-            'name' => $request->name(),
-            'description' => $request->description(),
             'days' => $request->days(),
+            'description' => $request->description(),
+            'is_public' => $request->isPublic(),
             'moods' => $request->moods(),
+            'name' => $request->name(),
+            'slug' => $request->slug(),
         ]);
 
         return new Response($travel);

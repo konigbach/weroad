@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Http\Api\V1\CreateTravel;
+namespace Tests\Feature\Http\Api\V1\UpdateTravel;
 
+use App\Models\Travel;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Concerns\WithValidationAssertions;
@@ -13,18 +14,26 @@ class Test extends FeatureTestCase
 {
     use WithValidationAssertions;
 
-    /** @test */
-    public function a_guest_cant_create_a_travel(): void
+    private Travel $travel;
+
+    protected function setUp(): void
     {
-        $this->createTravel()
+        parent::setUp();
+        $this->travel = Travel::factory()->create();
+    }
+
+    /** @test */
+    public function a_guest_cant_update_a_travel(): void
+    {
+        $this->updateTravel()
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     /** @test */
-    public function an_admin_cant_create_a_travel_if_it_has_not_permission_to(): void
+    public function an_admin_cant_update_a_travel_if_it_has_not_permission_to(): void
     {
         $this->auth()
-            ->createTravel()
+            ->updateTravel()
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -33,10 +42,10 @@ class Test extends FeatureTestCase
      *
      * @dataProvider invalidPayloads
      */
-    public function to_create_a_travel_a_valid_payload_is_required(array $input, string $errorKey): void
+    public function to_update_a_travel_a_valid_payload_is_required(array $input, string $errorKey): void
     {
-        $this->authAsAdminRole()
-            ->createTravel($input)
+        $this->authAsEditorRole()
+            ->updateTravel($input)
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertValidationErrorRule($errorKey);
     }
@@ -82,29 +91,16 @@ class Test extends FeatureTestCase
     }
 
     /** @test */
-    public function an_admin_can_create_a_travel(): void
+    public function an_editor_can_update_a_travel(): void
     {
-        $this->authAsAdminRole()
-            ->createTravel()
-            ->assertStatus(Response::HTTP_CREATED);
-
-        $this->assertDatabaseHas('travels', [
-            'slug' => 'iceland-hunting-northern-lights',
-            'is_public' => true,
-            'name' => 'Iceland: Hunting Northern Lights',
-            'description' => "Why visit Iceland in winter? Because it is between October and March that this land offers the spectacle of the Northern Lights, one of the most incredible and magical natural phenomena in the world, visible only near the earth's two magnetic poles. Come with us on WeRoad to explore this land of ice and fire, full of contrasts and natural variety, where the energy of waterfalls and geysers meets the peace of the fjords... And when the ribbons of light of the aurora borealis twinkle in the sky before our enchanted eyes, we will know that we have found what we were looking for.",
-            'days' => 8,
-            'moods->nature' => 100,
-            'moods->relax' => 30,
-            'moods->history' => 10,
-            'moods->culture' => 20,
-            'moods->party' => 10,
-        ]);
+        $this->authAsEditorRole()
+            ->updateTravel()
+            ->assertStatus(Response::HTTP_OK);
     }
 
-    private function createTravel(array $input = []): TestResponse
+    private function updateTravel(array $input = []): TestResponse
     {
-        return $this->postJson('api/v1/travels', $this->validInput($input));
+        return $this->putJson("api/v1/travels/{$this->travel->id}", $this->validInput($input));
     }
 
     private function validInput(array $override): array

@@ -13,10 +13,11 @@ final readonly class Controller
         $travel = Travel::query()
             ->update([
                 'slug' => $request->slug(),
+                'is_public' => $request->isPublic(),
                 'name' => $request->name(),
                 'description' => $request->description(),
                 'days' => $request->days(),
-                'moods' => $request->moods(),
+                'moods' => $request->moods()->toArray(),
             ]);
 
         return new Response();

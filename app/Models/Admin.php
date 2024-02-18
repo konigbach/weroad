@@ -68,6 +68,15 @@ class Admin extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->roles()->where('name', 'admin')->exists();
+        return $this->roles()
+            ->where('name', \App\Enum\Role::ADMIN->value)
+            ->exists();
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->roles()
+            ->where('name', \App\Enum\Role::EDITOR->value)
+            ->exists();
     }
 }

@@ -11,7 +11,7 @@ final readonly class Moods
         public int $relax,
         public int $history,
         public int $culture,
-        public int $party
+        public int $party,
     ) {
     }
 }

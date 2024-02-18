@@ -10,4 +10,9 @@ class TravelPolicy
     {
         return $admin->isAdmin();
     }
+
+    public function update(Admin $admin): bool
+    {
+        return $admin->isEditor();
+    }
 }

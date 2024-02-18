@@ -25,9 +25,9 @@ final class Request extends FormRequest
         return [
             'days' => 'required|integer',
             'description' => 'required|string',
-            'is_public' => 'required|boolean',
+            'isPublic' => 'required|boolean',
             'moods' => 'required|array',
-            'moods.0.culture' => 'required|int|min:0|max:100',
+            'moods.culture' => 'required|int|min:0|max:100',
             'moods.history' => 'required|int|min:0|max:100',
             'moods.nature' => 'required|int|min:0|max:100',
             'moods.party' => 'required|int|min:0|max:100',
@@ -44,7 +44,7 @@ final class Request extends FormRequest
 
     public function isPublic(): bool
     {
-        return $this->boolean('is_public');
+        return $this->boolean('isPublic');
     }
 
     public function name(): string
