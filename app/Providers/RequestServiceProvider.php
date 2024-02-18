@@ -13,6 +13,8 @@ class RequestServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerImmutableDate();
+        $this->registerNullableDate();
+        $this->registerTypeSafeNullablePrimitiveMethods();
         $this->registerRoutePrimitiveMethods();
     }
 
@@ -27,6 +29,11 @@ class RequestServiceProvider extends ServiceProvider
         });
     }
 
+    private function registerTypeSafeNullablePrimitiveMethods(): void
+    {
+        Request::macro('nullableInteger', fn (string $key): ?int => request()?->has($key) ? request()?->integer($key) : null);
+    }
+
     private function registerImmutableDate(): void
     {
         Request::macro('immutableDate', function (string $key): CarbonImmutable {
@@ -37,6 +44,21 @@ class RequestServiceProvider extends ServiceProvider
             assert($immutableDate instanceof CarbonImmutable);
 
             return $immutableDate;
+        });
+    }
+
+    private function registerNullableDate(): void
+    {
+        Request::macro('nullableDate', function (string $key): ?CarbonImmutable {
+            $date = request()?->date($key);
+
+            if (! $date) {
+                return null;
+            }
+
+            $date = CarbonImmutable::create($date);
+
+            return $date === false ? null : $date;
         });
     }
 }

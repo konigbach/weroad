@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\PublicApi\V1\ListTours;
 
+use App\Http\PublicApi\V1\ListTours\DTO\Sort;
+use App\ValueObjects\StringAmount;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -23,9 +25,11 @@ final class Request extends FormRequest
     {
         return [
             'dateFrom' => 'nullable|date',
-            'dateTo' => 'nullable|date|after:dateFrom',
+            'dateTo' => 'nullable|date',
             'priceFrom' => 'nullable|numeric',
-            'priceTo' => 'nullable|numeric|gte:priceFrom',
+            'priceTo' => 'nullable|numeric',
+            'sortBy' => 'nullable|in:price',
+            'sortOrder' => 'required_with:sortBy|in:asc,desc',
         ];
     }
 
@@ -34,23 +38,39 @@ final class Request extends FormRequest
         return $this->routeString('slug');
     }
 
-    public function dateFrom(): CarbonImmutable
+    public function dateFrom(): ?CarbonImmutable
     {
-        return $this->immutableDate('dateFrom');
+        return $this->nullableDate('dateFrom');
     }
 
-    public function dateTo(): CarbonImmutable
+    public function dateTo(): ?CarbonImmutable
     {
-        return $this->immutableDate('dateTo');
+        return $this->nullableDate('dateTo');
     }
 
-    public function priceFrom(): int
+    public function priceFrom(): ?StringAmount
     {
-        return $this->integer('priceFrom');
+        return $this->nullableInteger('priceFrom')
+            ? StringAmount::from($this->integer('priceFrom'))
+            : null;
     }
 
-    public function priceTo(): int
+    public function priceTo(): ?StringAmount
     {
-        return $this->integer('priceTo');
+        return $this->nullableInteger('priceTo')
+            ? StringAmount::from($this->integer('priceTo'))
+            : null;
+    }
+
+    public function sort(): ?Sort
+    {
+        if ($this->string('sortBy')->value() === '') {
+            return null;
+        }
+
+        return new Sort(
+            $this->string('sortBy')->value(),
+            $this->string('sortOrder')->value()
+        );
     }
 }

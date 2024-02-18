@@ -24,7 +24,7 @@ final readonly class Response implements Responsable
             'name' => $this->tour->name,
             'startingDate' => $this->tour->starting_date,
             'endingDate' => $this->tour->ending_date,
-            'price' => $this->tour->formattedPrice(),
+            'price' => $this->tour->price,
         ], SymfonyResponse::HTTP_CREATED);
     }
 }

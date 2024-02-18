@@ -13,17 +13,8 @@ return new class extends Migration
     {
         Schema::create('admin_role', function (Blueprint $table) {
             $table->increments('id');
-            $table->uuid('admin_id');
-            $table->uuid('role_id');
-
-            $table->foreign('admin_id')
-                ->references('id')
-                ->on('admins')
-                ->onDelete('cascade');
-
-            $table->foreign('role_id')
-                ->references('id')
-                ->on('roles');
+            $table->foreignUuid('admin_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('role_id')->constrained()->cascadeOnDelete();
         });
     }
 

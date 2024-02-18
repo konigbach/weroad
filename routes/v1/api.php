@@ -10,5 +10,5 @@ $router->group([
 ], function (Router $router) {
     $router->post('', CreateTravel\Controller::class);
     $router->put('{travel}', UpdateTravel\Controller::class);
-    $router->post('{slug}/create', CreateTour\Controller::class);
+    $router->post('{slug}/tours', CreateTour\Controller::class);
 });

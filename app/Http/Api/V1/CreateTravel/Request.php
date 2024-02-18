@@ -9,6 +9,7 @@ use App\Models\Travel;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Str;
 
 final class Request extends FormRequest
 {
@@ -33,13 +34,12 @@ final class Request extends FormRequest
             'moods.party' => 'required|int|min:0|max:100',
             'moods.relax' => 'required|int|min:0|max:100',
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
         ];
     }
 
     public function slug(): string
     {
-        return $this->string('slug')->value();
+        return Str::slug($this->name());
     }
 
     public function isPublic(): bool

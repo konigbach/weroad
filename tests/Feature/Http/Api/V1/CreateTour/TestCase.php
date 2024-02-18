@@ -76,7 +76,7 @@ class TestCase extends FeatureTestCase
         $this->assertDatabaseHas('tours', [
             'ending_date' => '2020-01-02',
             'name' => 'Tour name',
-            'price' => 10_000,
+            'price' => 10_00000,
             'starting_date' => '2020-01-01',
             'travel_id' => $this->travel->id,
         ]);
@@ -84,7 +84,7 @@ class TestCase extends FeatureTestCase
 
     private function createTour(array $input = []): TestResponse
     {
-        return $this->postJson("api/v1/travels/{$this->travel->slug}/create", $this->validInput($input));
+        return $this->postJson("api/v1/travels/{$this->travel->slug}/tours", $this->validInput($input));
     }
 
     private function validInput(array $override): array

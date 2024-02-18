@@ -6,5 +6,5 @@ use Illuminate\Routing\Router;
 $router->group([
     'prefix' => 'travels',
 ], function (Router $router) {
-    $router->get('{slug}', ListTours\Controller::class);
+    $router->get('{travel:slug}/tours', ListTours\Controller::class);
 });

@@ -75,9 +75,6 @@ class Test extends FeatureTestCase
             'name_is_required' => [['name' => null], 'name'],
             'name_must_be_a_string' => [['name' => 123], 'name'],
             'name_must_not_exceed_255_characters' => [['name' => str_repeat('a', 256)], 'name'],
-            'slug_is_required' => [['slug' => null], 'slug'],
-            'slug_must_be_a_string' => [['slug' => 123], 'slug'],
-            'slug_must_not_exceed_255_characters' => [['slug' => str_repeat('a', 256)], 'slug'],
         ];
     }
 
@@ -110,7 +107,6 @@ class Test extends FeatureTestCase
     private function validInput(array $override): array
     {
         return array_merge([
-            'slug' => 'iceland-hunting-northern-lights',
             'isPublic' => true,
             'name' => 'Iceland: Hunting Northern Lights',
             'description' => "Why visit Iceland in winter? Because it is between October and March that this land offers the spectacle of the Northern Lights, one of the most incredible and magical natural phenomena in the world, visible only near the earth's two magnetic poles. Come with us on WeRoad to explore this land of ice and fire, full of contrasts and natural variety, where the energy of waterfalls and geysers meets the peace of the fjords... And when the ribbons of light of the aurora borealis twinkle in the sky before our enchanted eyes, we will know that we have found what we were looking for.",

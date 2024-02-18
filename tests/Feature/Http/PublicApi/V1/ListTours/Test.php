@@ -40,15 +40,52 @@ class Test extends FeatureTestCase
         return [
             'date_from_must_be_a_date' => [['dateFrom' => 'invalid-date'], 'dateFrom'],
             'date_to_must_be_a_date' => [['dateTo' => 'invalid-date'], 'dateTo'],
-            'date_to_must_be_after_date_from' => [['dateFrom' => '2024-01-01', 'dateTo' => '2024-01-01'], 'dateTo'],
             'price_from_must_be_numeric' => [['priceFrom' => 'invalid-price'], 'priceFrom'],
             'price_to_must_be_numeric' => [['priceTo' => 'invalid-price'], 'priceTo'],
-            'price_to_must_be_greater_than_or_equal_to_price_from' => [['priceFrom' => 100, 'priceTo' => 50], 'priceTo'],
+            'sort_by_must_be_one_of_price' => [['sortBy' => 'invalid-sort-by'], 'sortBy'],
+            'sort_order_is_required_if_sort_by_is_present' => [['sortBy' => 'price'], 'sortOrder'],
+            'sort_order_must_be_asc_or_desc' => [['sortBy' => 'price', 'sortOrder' => 'invalid-sort-order'], 'sortOrder'],
         ];
     }
 
     /** @test */
-    public function a_user_can_list_tours_filter_by_date_from(): void
+    public function a_user_can_list_tours_filtered_by_date_from(): void
+    {
+        $tour = Tour::factory()
+            ->create([
+                'ending_date' => '2024-01-10',
+                'name' => 'Tour 1',
+                'price' => 999,
+                'starting_date' => '2024-01-01',
+                'travel_id' => $this->travel->id,
+            ]);
+
+        $pastTour = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'starting_date' => '2023-01-01',
+            ]);
+
+        $this->listTours(['dateFrom' => '2024-01-01'])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(1, 'data.tours')
+            ->assertJson([
+                'data' => [
+                    'tours' => [
+                        [
+                            'id' => $tour->id,
+                            'name' => 'Tour 1',
+                            'price' => 999,
+                            'startingDate' => '2024-01-01',
+                            'endingDate' => '2024-01-10',
+                        ],
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function a_user_can_list_tours_filtered_by_date_to(): void
     {
         $tour = Tour::factory()
             ->create([
@@ -62,75 +99,59 @@ class Test extends FeatureTestCase
                 'starting_date' => '2023-01-01',
             ]);
 
-        $this->listTours(['dateFrom' => '2024-01-01'])
+        $this->listTours(['dateTo' => '2024-01-01'])
             ->assertStatus(Response::HTTP_OK)
-            ->assertJson([
-                'tours' => [
-                    [
-                        'id' => $tour->id,
-                    ],
-                ],
-            ])->assertJsonMissing([
-                'tours' => [
-                    [
-                        'id' => $pastTour->id,
-                    ],
-                ],
-            ]);
+            ->assertJsonCount(2, 'data.tours');
     }
 
     /** @test */
-    public function a_user_can_list_tours_filter_by_date_to(): void
+    public function a_user_can_list_tours_filtered_by_price_from(): void
     {
-        $tour = Tour::factory()
+        $tourOnPrice = Tour::factory()
             ->create([
                 'travel_id' => $this->travel->id,
-                'starting_date' => '2024-02-01',
+                'price' => '999',
             ]);
 
-        $pastTour = Tour::factory()
+        $lowerTour = Tour::factory()
             ->create([
                 'travel_id' => $this->travel->id,
-                'starting_date' => '2024-01-01',
+                'price' => '998',
             ]);
 
-        $this->listTours(['dateTo' => '2024-02-01'])
+        $this->listTours(['priceFrom' => '999'])
             ->assertStatus(Response::HTTP_OK)
-            ->assertJson([
-                'tours' => [
-                    [
-                        'id' => $tour->id,
-                    ],
-                ],
-            ])->assertJsonMissing([
-                'tours' => [
-                    [
-                        'id' => $pastTour->id,
-                    ],
-                ],
+            ->assertJsonCount(1, 'data.tours');
+    }
+
+    /** @test */
+    public function a_user_can_list_tours_filtered_by_price_to(): void
+    {
+        $tourAbovePrice = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'price' => 1000,
             ]);
+
+        $tourOnPrice = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'price' => 999,
+            ]);
+
+        $tour2OnPrice = Tour::factory()
+            ->create([
+                'travel_id' => $this->travel->id,
+                'price' => 998,
+            ]);
+
+        $this->listTours(['priceTo' => '999'])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(2, 'data.tours');
     }
 
     private function listTours(array $params = []): TestResponse
     {
-        return $this->getJson("public-api/v1/travels/{$this->travel->slug}?".http_build_query($params));
-    }
-
-    private function validInput(array $override): array
-    {
-        return array_merge([
-            'slug' => 'iceland-hunting-northern-lights',
-            'is_public' => true,
-            'name' => 'Iceland: Hunting Northern Lights',
-            'description' => "Why visit Iceland in winter? Because it is between October and March that this land offers the spectacle of the Northern Lights, one of the most incredible and magical natural phenomena in the world, visible only near the earth's two magnetic poles. Come with us on WeRoad to explore this land of ice and fire, full of contrasts and natural variety, where the energy of waterfalls and geysers meets the peace of the fjords... And when the ribbons of light of the aurora borealis twinkle in the sky before our enchanted eyes, we will know that we have found what we were looking for.",
-            'days' => 8,
-            'moods' => [
-                'nature' => 100,
-                'relax' => 30,
-                'history' => 10,
-                'culture' => 20,
-                'party' => 10,
-            ],
-        ], $override);
+        return $this->getJson("public-api/v1/travels/{$this->travel->slug}/tours?".http_build_query($params));
     }
 }

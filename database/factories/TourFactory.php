@@ -17,10 +17,10 @@ class TourFactory extends Factory
     {
         return [
             'travel_id' => Travel::factory()->create()->id,
-            'name' => $this->faker->name,
+            'name' => $this->faker->word,
             'starting_date' => $this->faker->date(),
             'ending_date' => $this->faker->date(),
-            'price' => 1000_00,
+            'price' => 1000,
         ];
     }
 }
