@@ -19,4 +19,13 @@ specific Request and a specific Response. Changes in the long run will be easier
 ### DOCS
 - Inside ```docs``` folder you can find the ```changelog``` and the openapi.yaml
 initial doc. Inside each endpoint folder you have the specifications (with ChatGPT or similar, you can 
-generate based on the form request and response the document really fast). 
+generate based on the form request and response the document really fast).
+
+- I use redocly for the OpenAPI documentation.
+```shell
+yarn install
+yarn docs:build
+yarn docs:serve
+```
+Visit localhost:8080
+![img.png](docs/img.png)

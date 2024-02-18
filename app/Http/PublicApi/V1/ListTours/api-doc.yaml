@@ -1,0 +1,94 @@
+paths:
+  /public-api/v1/tours:
+    get:
+      summary: Get tours with optional filters and sorting
+      parameters:
+        - in: query
+          name: dateFrom
+          schema:
+            type: string
+            format: date
+          description: Filter tours with starting date after or equal to this date
+        - in: query
+          name: dateTo
+          schema:
+            type: string
+            format: date
+          description: Filter tours with ending date before or equal to this date
+        - in: query
+          name: priceFrom
+          schema:
+            type: number
+          description: Filter tours with price greater than or equal to this value
+        - in: query
+          name: priceTo
+          schema:
+            type: number
+          description: Filter tours with price less than or equal to this value
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+          description: Field to sort tours by (e.g., price)
+        - in: query
+          name: sortOrder
+          schema:
+            type: string
+          description: Sort order (asc for ascending, desc for descending)
+          required: true
+      responses:
+        '200':
+          description: Successful response containing tours
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    description: Metadata about pagination
+                    properties:
+                      current_page:
+                        type: integer
+                        description: Current page number
+                      from:
+                        type: integer
+                        description: Index of the first item in the current page
+                      last_page:
+                        type: integer
+                        description: Total number of pages
+                      per_page:
+                        type: integer
+                        description: Number of items per page
+                      to:
+                        type: integer
+                        description: Index of the last item in the current page
+                      total:
+                        type: integer
+                        description: Total number of items
+                  data:
+                    type: object
+                    description: Data containing tours
+                    properties:
+                      tours:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              description: ID of the tour
+                            endingDate:
+                              type: string
+                              format: date
+                              description: Ending date of the tour
+                            name:
+                              type: string
+                              description: Name of the tour
+                            price:
+                              type: number
+                              description: Price of the tour
+                            startingDate:
+                              type: string
+                              format: date
+                              description: Starting date of the tour

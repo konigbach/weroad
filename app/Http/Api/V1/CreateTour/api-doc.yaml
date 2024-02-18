@@ -1,0 +1,63 @@
+paths:
+  /api/v1/travels:
+    post:
+      summary: Create a new travel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startingDate:
+                  type: string
+                  format: date
+                  description: Starting date of the travel
+                  example: "2024-02-18"
+                endingDate:
+                  type: string
+                  format: date
+                  description: Ending date of the travel
+                  example: "2024-02-20"
+                name:
+                  type: string
+                  description: Name of the travel
+                  example: "Exciting Tour"
+                price:
+                  type: number
+                  description: Price of the travel
+                  example: 1000.00
+      responses:
+        '201':
+          description: Travel created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID of the created travel
+                    example: 123
+                  travelId:
+                    type: integer
+                    description: ID of the associated travel
+                    example: 456
+                  name:
+                    type: string
+                    description: Name of the travel
+                    example: "Exciting Tour"
+                  startingDate:
+                    type: string
+                    format: date
+                    description: Starting date of the travel
+                    example: "2024-02-18"
+                  endingDate:
+                    type: string
+                    format: date
+                    description: Ending date of the travel
+                    example: "2024-02-20"
+                  price:
+                    type: number
+                    description: Price of the travel
+                    example: 1000.00

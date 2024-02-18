@@ -1,0 +1,70 @@
+paths:
+  /api/v1/travels/{slug}/tours:
+    post:
+      summary: Create a new tour for a travel
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+          description: Unique identifier (slug) of the travel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                days:
+                  type: integer
+                  description: Number of days for the tour
+                  example: 7
+                description:
+                  type: string
+                  description: Description of the tour
+                  example: "Explore the beautiful landscapes and rich history of the region."
+                isPublic:
+                  type: boolean
+                  description: Indicates if the tour is public or private
+                  example: true
+                moods:
+                  type: object
+                  description: Moods rating for the tour
+                  properties:
+                    culture:
+                      type: integer
+                      description: Culture mood rating (0-100)
+                      example: 80
+                    history:
+                      type: integer
+                      description: History mood rating (0-100)
+                      example: 70
+                    nature:
+                      type: integer
+                      description: Nature mood rating (0-100)
+                      example: 90
+                    party:
+                      type: integer
+                      description: Party mood rating (0-100)
+                      example: 50
+                    relax:
+                      type: integer
+                      description: Relax mood rating (0-100)
+                      example: 85
+                name:
+                  type: string
+                  description: Name of the tour
+                  example: "Historical Adventure"
+      responses:
+        '201':
+          description: Tour created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: ID of the created tour
+                    example: 123
