@@ -13,7 +13,8 @@
 - I think ```is_public``` is not used in the task description.
 - Ideally 'users' table should be used for _users_ and another table for ```admins```.
 - This is an example of a CRUD but approaches like Hexagonal Architecture pays off in the long run.
-- In the request, I like to work with type hints (a 'problem' with $request->thingy is that you don't know what type is a 'thingy').
+- In the request, I like to work with type hints (a 'problem' with $request->thingy is that you don't know what type is a 'thingy'). Also, it 
+helps while working with DTOs and a more OOP approach (arrays as data structures cannot be validated so easily).
 I have used RequestServiceProvider for the sake of an example in how to extend the Framework in a clean way.
 - Why not using ```Laravel Resources```? Following SRP and after my experience, every endpoint MUST have a
 specific ```Request``` and a specific ```Response```. Changes in the long run will be easier to handle.
